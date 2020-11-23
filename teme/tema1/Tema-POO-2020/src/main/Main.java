@@ -3,16 +3,24 @@ package main;
 import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
+import entities.Actor;
+import entities.Movie;
+import entities.Show;
+import entities.User;
+import fileio.ActionInputData;
 import fileio.Input;
 import fileio.InputLoader;
 import fileio.Writer;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -71,6 +79,34 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
+        ArrayList<Actor> actors = new ArrayList<>();
+        ArrayList<Movie> movies = new ArrayList<>();
+        ArrayList<Show> shows = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
+        List<ActionInputData> commands = input.getCommands();
+        for (int i = 0; i < input.getActors().size(); i++) {
+            Actor actor = new Actor(i, input);
+            actors.add(i, actor);
+        }
+        for (int i = 0; i < input.getMovies().size(); i++) {
+            Movie movie = new Movie(i, input);
+            movies.add(i, movie);
+        }
+        for (int i = 0; i < input.getSerials().size(); i++) {
+            Show show = new Show(i, input);
+            shows.add(i, show);
+        }
+        for (int i = 0; i < input.getUsers().size(); i++) {
+            User user = new User(i, input);
+            users.add(i, user);
+            System.out.println(users.get(i).getHistory());
+        }
+
+        for (ActionInputData command : commands) {
+            JSONObject object = fileWriter.writeFile(command.getActionId(),
+                    command.getCriteria(), command.getTitle());
+            arrayResult.add(object);
+        }
 
         fileWriter.closeJSON(arrayResult);
     }
