@@ -4,6 +4,7 @@ import entertainment.Season;
 import fileio.Input;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Show {
@@ -13,6 +14,8 @@ public class Show {
     private ArrayList<String> cast;
     private int numberOfSeasons;
     private ArrayList<Season> season;
+    private ArrayList<Double> rating;
+    public int numViews;
 
     public Show(int index, Input input) {
         this.title = input.getSerials().get(index).getTitle();
@@ -21,6 +24,11 @@ public class Show {
         this.cast = input.getSerials().get(index).getCast();
         this.numberOfSeasons = input.getSerials().get(index).getNumberSeason();
         this.season = input.getSerials().get(index).getSeasons();
+        rating = new ArrayList<>();
+        for (int i = 0 ; i < season.size(); i++) {
+            rating.add((double) 0);
+        }
+        this.numViews = 0;
     }
 
     public String getTitle() {
@@ -45,5 +53,9 @@ public class Show {
 
     public ArrayList<Season> getSeason() {
         return season;
+    }
+
+    public ArrayList<Double> getRating() {
+        return rating;
     }
 }

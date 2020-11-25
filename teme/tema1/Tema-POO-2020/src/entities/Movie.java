@@ -10,7 +10,8 @@ public class Movie {
     private int year;
     private ArrayList<String> cast;
     private int duration;
-    private int rating;
+    private double rating;
+    public int numViews;
 
     public Movie(int index, Input input) {
         this.title = input.getMovies().get(index).getTitle();
@@ -18,6 +19,7 @@ public class Movie {
         this.year = input.getMovies().get(index).getYear();
         this.cast = input.getMovies().get(index).getCast();
         this.duration = input.getMovies().get(index).getDuration();
+        this.numViews = 0;
     }
 
     public String getName() {
@@ -40,7 +42,11 @@ public class Movie {
         return duration;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

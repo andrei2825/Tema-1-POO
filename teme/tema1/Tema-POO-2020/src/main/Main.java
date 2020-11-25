@@ -13,6 +13,8 @@ import fileio.InputLoader;
 import fileio.Writer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import solver.Commands;
+import solver.Solve;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +85,9 @@ public final class Main {
         ArrayList<Movie> movies = new ArrayList<>();
         ArrayList<Show> shows = new ArrayList<>();
         ArrayList<User> users = new ArrayList<>();
-        List<ActionInputData> commands = input.getCommands();
+        List<ActionInputData> actions = input.getCommands();
+        Commands commands = new Commands();
+        Solve solve = new Solve();
         for (int i = 0; i < input.getActors().size(); i++) {
             Actor actor = new Actor(i, input);
             actors.add(i, actor);
@@ -99,15 +103,13 @@ public final class Main {
         for (int i = 0; i < input.getUsers().size(); i++) {
             User user = new User(i, input);
             users.add(i, user);
-            System.out.println(users.get(i).getHistory());
         }
 
-        for (ActionInputData command : commands) {
-            JSONObject object = fileWriter.writeFile(command.getActionId(),
-                    command.getCriteria(), command.getTitle());
+        for (ActionInputData action : actions) {
+            JSONObject object = fileWriter.writeFile(action.getActionId(),
+                    action.getCriteria(), solve.solve(action, users, movies, shows, actors));
             arrayResult.add(object);
         }
-
         fileWriter.closeJSON(arrayResult);
     }
 }
