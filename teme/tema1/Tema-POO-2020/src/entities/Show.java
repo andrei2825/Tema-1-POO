@@ -15,6 +15,7 @@ public class Show {
     private int numberOfSeasons;
     private ArrayList<Season> season;
     private ArrayList<Double> rating;
+    private ArrayList<Integer> numRatings;
     public int numViews;
 
     public Show(int index, Input input) {
@@ -27,6 +28,10 @@ public class Show {
         rating = new ArrayList<>();
         for (int i = 0 ; i < season.size(); i++) {
             rating.add((double) 0);
+        }
+        numRatings = new ArrayList<>();
+        for (int i = 0 ; i < season.size(); i++) {
+            numRatings.add((int) 0);
         }
         this.numViews = 0;
     }
@@ -57,5 +62,9 @@ public class Show {
 
     public ArrayList<Double> getRating() {
         return rating;
+    }
+
+    public ArrayList<Integer> getNumRatings() {
+        return numRatings;
     }
 }

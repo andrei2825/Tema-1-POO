@@ -92,27 +92,44 @@ public class Commands {
                 String username = action.getUsername();
                 for (User user : users) {
                     if (username.equals(user.getUsername())) {
+                        int index = 0;
                         for (Map.Entry<String, Integer> entry : user.getHistory().entrySet()) {
                             if (entry.getKey().equals(action.getTitle())) {
-                                if (action.getSeasonNumber() == 0) {
-                                    for (Movie movie : movies) {
-                                        if (movie.getName().equals(action.getTitle())) {
-                                            movie.setRating(action.getGrade());
-                                            return "success -> " + action.getTitle() + " was rated with " +
-                                                    action.getGrade() +  " by " +  username;
+                                user.ratedIndex = index;
+                                if (user.getRated().get(user.ratedIndex) == 0) {
+                                    if (action.getSeasonNumber() == 0) {
+                                        for (Movie movie : movies) {
+                                            if (movie.getName().equals(action.getTitle())) {
+                                                user.getRated().set(index, 1);
+                                                movie.setRating(movie.getRating() + action.getGrade());
+                                                movie.setNumRatings(movie.getNumRatings() + 1);
+                                                return "success -> " + action.getTitle() + " was rated with " +
+                                                        action.getGrade() + " by " + username;
+                                            }
+                                        }
+                                    } else {
+                                        for (Show show : shows) {
+                                            if (show.getTitle().equals(action.getTitle())) {
+//                                                System.out.println(user.prevSeasonRated + " " + action.getSeasonNumber() +
+//                                                        " " + username + " " + action.getActionId() + " " + action.getTitle());
+//                                                if (user.prevSeasonRated != action.getSeasonNumber()) {
+//                                                    user.prevSeasonRated = action.getSeasonNumber();
+//                                                    user.getRated().set(user.ratedIndex, 1);
+                                                    show.getRating().set(action.getSeasonNumber() - 1, action.getGrade());
+                                                    show.getNumRatings().set(action.getSeasonNumber() - 1,
+                                                            show.getNumRatings().get(action.getSeasonNumber() - 1) + 1);
+                                                    return "success -> " + action.getTitle() +
+                                                            " was rated with " + action.getGrade() + " by " + username;
+//                                                }
+                                            }
                                         }
                                     }
                                 }
                                 else {
-                                    for (Show show : shows) {
-                                        if (show.getTitle().equals(action.getTitle())) {
-                                            show.getRating().set(action.getSeasonNumber()-1, action.getGrade());
-                                            return "success -> " + action.getTitle() +
-                                                    " was rated with " + action.getGrade() + " by " + username;
-                                        }
-                                    }
+                                    return "error -> " + action.getTitle() + " has been already rated";
                                 }
                             }
+                            index += 1;
                         }
                         return "error -> " + action.getTitle() + " is not seen";
                     }
