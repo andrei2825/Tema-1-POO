@@ -110,17 +110,11 @@ public class Commands {
                                     } else {
                                         for (Show show : shows) {
                                             if (show.getTitle().equals(action.getTitle())) {
-//                                                System.out.println(user.prevSeasonRated + " " + action.getSeasonNumber() +
-//                                                        " " + username + " " + action.getActionId() + " " + action.getTitle());
-//                                                if (user.prevSeasonRated != action.getSeasonNumber()) {
-//                                                    user.prevSeasonRated = action.getSeasonNumber();
-//                                                    user.getRated().set(user.ratedIndex, 1);
                                                     show.getRating().set(action.getSeasonNumber() - 1, action.getGrade());
                                                     show.getNumRatings().set(action.getSeasonNumber() - 1,
                                                             show.getNumRatings().get(action.getSeasonNumber() - 1) + 1);
                                                     return "success -> " + action.getTitle() +
                                                             " was rated with " + action.getGrade() + " by " + username;
-//                                                }
                                             }
                                         }
                                     }
