@@ -17,6 +17,7 @@ public class Show {
     private ArrayList<Double> rating;
     private ArrayList<Integer> numRatings;
     public int numViews;
+    private int numFavorite;
 
     public Show(int index, Input input) {
         this.title = input.getSerials().get(index).getTitle();
@@ -34,6 +35,7 @@ public class Show {
             numRatings.add((int) 0);
         }
         this.numViews = 0;
+        this.numFavorite = 0;
     }
 
     public String getTitle() {
@@ -66,5 +68,13 @@ public class Show {
 
     public ArrayList<Integer> getNumRatings() {
         return numRatings;
+    }
+
+    public int getNumFavorite() {
+        return numFavorite;
+    }
+
+    public void setNumFavorite(int numFavorite) {
+        this.numFavorite = numFavorite;
     }
 }

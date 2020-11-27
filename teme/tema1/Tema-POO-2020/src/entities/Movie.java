@@ -13,6 +13,7 @@ public class Movie {
     private double rating;
     public int numViews;
     private int numRatings;
+    private int numFavorite;
 
     public Movie(int index, Input input) {
         this.title = input.getMovies().get(index).getTitle();
@@ -22,7 +23,7 @@ public class Movie {
         this.duration = input.getMovies().get(index).getDuration();
         this.numViews = 0;
         this.numRatings = 0;
-
+        this.numFavorite = 0;
     }
 
     public String getName() {
@@ -59,5 +60,13 @@ public class Movie {
 
     public void setNumRatings(int numRatings) {
         this.numRatings = numRatings;
+    }
+
+    public int getNumFavorite() {
+        return numFavorite;
+    }
+
+    public void setNumFavorite(int numFavorite) {
+        this.numFavorite = numFavorite;
     }
 }

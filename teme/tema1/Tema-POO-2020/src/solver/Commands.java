@@ -103,6 +103,7 @@ public class Commands {
                                                 user.getRated().set(index, 1);
                                                 movie.setRating(movie.getRating() + action.getGrade());
                                                 movie.setNumRatings(movie.getNumRatings() + 1);
+                                                user.numRatings += 1;
                                                 return "success -> " + action.getTitle() + " was rated with " +
                                                         action.getGrade() + " by " + username;
                                             }
@@ -113,6 +114,7 @@ public class Commands {
                                                     show.getRating().set(action.getSeasonNumber() - 1, action.getGrade());
                                                     show.getNumRatings().set(action.getSeasonNumber() - 1,
                                                             show.getNumRatings().get(action.getSeasonNumber() - 1) + 1);
+                                                    user.numRatings += 1;
                                                     return "success -> " + action.getTitle() +
                                                             " was rated with " + action.getGrade() + " by " + username;
                                             }
