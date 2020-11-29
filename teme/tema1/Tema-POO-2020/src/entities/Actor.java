@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class Actor {
-    private String name;
-    private String careerDescription;
-    private ArrayList<String> filmography;
-    private Map<ActorsAwards, Integer> awards;
+    private final String name;
+    private final String careerDescription;
+    private final ArrayList<String> filmography;
+    private final Map<ActorsAwards, Integer> awards;
     private int numAwards;
     private double avgRating;
 

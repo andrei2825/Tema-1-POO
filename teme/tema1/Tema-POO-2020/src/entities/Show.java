@@ -4,18 +4,16 @@ import entertainment.Season;
 import fileio.Input;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Show {
-    private String title;
-    private ArrayList<String> genres;
-    private int year;
-    private ArrayList<String> cast;
-    private int numberOfSeasons;
-    private ArrayList<Season> season;
-    private ArrayList<Double> rating;
-    private ArrayList<Integer> numRatings;
+    private final String title;
+    private final ArrayList<String> genres;
+    private final int year;
+    private final ArrayList<String> cast;
+    private final int numberOfSeasons;
+    private final ArrayList<Season> season;
+    private final ArrayList<Double> rating;
+    private final ArrayList<Integer> numRatings;
     public int numViews;
     private int numFavorite;
 
@@ -32,7 +30,7 @@ public class Show {
         }
         numRatings = new ArrayList<>();
         for (int i = 0 ; i < season.size(); i++) {
-            numRatings.add((int) 0);
+            numRatings.add(0);
         }
         this.numViews = 0;
         this.numFavorite = 0;

@@ -1,8 +1,5 @@
 package solver;
 
-import entities.Actor;
-import entities.Movie;
-import entities.Show;
 import entities.User;
 import fileio.ActionInputData;
 
@@ -12,8 +9,7 @@ import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
 public class QueryUsers {
-    public String  queryUsers(ActionInputData action, ArrayList<Actor> actors,
-                               ArrayList<Movie> movies, ArrayList<Show> shows, ArrayList<User> users) {
+    public String  queryUsers(ActionInputData action,ArrayList<User> users) {
         if (action.getSortType().equals("asc")) {
             users.sort(Comparator.comparing(User::getUsername));
         }

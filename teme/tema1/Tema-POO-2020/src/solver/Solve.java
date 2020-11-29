@@ -14,15 +14,11 @@ public class Solve {
     Recommendations recommendations = new Recommendations();
     public String solve(ActionInputData action, ArrayList<User> users,
                           ArrayList<Movie> movies, ArrayList<Show> shows, ArrayList<Actor> actors) {
-        if (action.getActionType().equals("command")) {
-            return commands.command(action, users, movies, shows);
-        }
-        else if (action.getActionType().equals("query")) {
-            return queries.query(action, actors, movies, shows, users);
-        }
-        else if (action.getActionType().equals("recommendation")) {
-            return recommendations.recommendation(action, actors, movies, shows, users);
-        }
-        return action.getActionType();
+        return switch (action.getActionType()) {
+            case "command" -> commands.command(action, users, movies, shows);
+            case "query" -> queries.query(action, actors, movies, shows, users);
+            case "recommendation" -> recommendations.recommendation(action, movies, shows, users);
+            default -> action.getActionType();
+        };
     }
 }

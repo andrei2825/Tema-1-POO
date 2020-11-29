@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class User {
-    private String username;
-    private String subscriptionType;
-    private ArrayList<String> favoriteMovies;
-    private Map<String, Integer> history;
-    private ArrayList<Integer> rated;
+    private final String username;
+    private final String subscriptionType;
+    private final ArrayList<String> favoriteMovies;
+    private final Map<String, Integer> history;
+    private final ArrayList<Integer> rated;
+    private String prevUser;
     public int ratedIndex;
     public int numRatings;
     public int prevSeasonRated;
@@ -27,6 +28,7 @@ public class User {
         }
         this.ratedIndex = 0;
         this.prevSeasonRated = 0;
+        this.prevUser = null;
     }
 
     public String getUsername() {
@@ -47,5 +49,13 @@ public class User {
 
     public ArrayList<Integer> getRated() {
         return rated;
+    }
+
+    public String getPrevUser() {
+        return prevUser;
+    }
+
+    public void setPrevUser(String prevUser) {
+        this.prevUser = prevUser;
     }
 }

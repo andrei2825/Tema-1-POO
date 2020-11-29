@@ -5,11 +5,11 @@ import fileio.Input;
 import java.util.ArrayList;
 
 public class Movie {
-    private String title;
-    private ArrayList<String> genres;
-    private int year;
-    private ArrayList<String> cast;
-    private int duration;
+    private final String title;
+    private final ArrayList<String> genres;
+    private final int year;
+    private final ArrayList<String> cast;
+    private final int duration;
     private double rating;
     public int numViews;
     private int numRatings;

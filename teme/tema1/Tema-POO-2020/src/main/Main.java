@@ -1,7 +1,7 @@
 package main;
 
-import checker.Checkstyle;
 import checker.Checker;
+import checker.Checkstyle;
 import common.Constants;
 import entities.Actor;
 import entities.Movie;
@@ -13,7 +13,6 @@ import fileio.InputLoader;
 import fileio.Writer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import solver.Commands;
 import solver.Solve;
 
 import java.io.File;
@@ -86,7 +85,6 @@ public final class Main {
         ArrayList<Show> shows = new ArrayList<>();
         ArrayList<User> users = new ArrayList<>();
         List<ActionInputData> actions = input.getCommands();
-        Commands commands = new Commands();
         Solve solve = new Solve();
         for (int i = 0; i < input.getActors().size(); i++) {
             Actor actor = new Actor(i, input);

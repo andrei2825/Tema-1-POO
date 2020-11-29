@@ -6,7 +6,6 @@ import fileio.ActionInputData;
 import entities.User;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 public class Commands {
@@ -38,7 +37,7 @@ public class Commands {
                                 }
                             }
 
-                            user.getHistory().put(action.getTitle(), 1);
+                            //user.getHistory().put(action.getTitle(), 1);
                             user.getFavoriteMovies().add(action.getTitle());
                             return "success -> " + action.getTitle() + " was added as favourite";
                         } else {
@@ -65,7 +64,7 @@ public class Commands {
                                         break;
                                     }
                                 }
-                                entry.setValue(entry.getValue() + 1);
+                                user.getHistory().put(action.getTitle(), entry.getValue() + 1);
                                 return "success -> " + action.getTitle() +
                                         " was viewed with total views of " + entry.getValue();
                             }
@@ -111,7 +110,9 @@ public class Commands {
                                     } else {
                                         for (Show show : shows) {
                                             if (show.getTitle().equals(action.getTitle())) {
-                                                    show.getRating().set(action.getSeasonNumber() - 1, action.getGrade());
+                                                    show.getRating().set(action.getSeasonNumber() - 1,
+                                                            show.getRating().get(action.getSeasonNumber() - 1) +
+                                                                    action.getGrade());
                                                     show.getNumRatings().set(action.getSeasonNumber() - 1,
                                                             show.getNumRatings().get(action.getSeasonNumber() - 1) + 1);
                                                     user.numRatings += 1;

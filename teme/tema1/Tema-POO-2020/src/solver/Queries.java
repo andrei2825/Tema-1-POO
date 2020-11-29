@@ -23,21 +23,12 @@ public class Queries {
                          ArrayList<Movie> movies, ArrayList<Show> shows, ArrayList<User> users) {
 
 
-        if (action.getObjectType().equals("actors")) {
-            return queryActors.queryActors(action, actors, movies, shows, users);
-        }
-
-        if (action.getObjectType().equals("movies")) {
-            return queryMovies.queryMovies(action, actors, movies, shows, users);
-        }
-
-        if (action.getObjectType().equals("shows")) {
-            return  queryShows.queryShows(action, actors, movies, shows, users);
-        }
-
-        if (action.getObjectType().equals("users")) {
-            return queryUsers.queryUsers(action, actors, movies, shows, users);
-        }
-        return null;
+        return switch (action.getObjectType()) {
+            case "actors" -> queryActors.queryActors(action, actors, movies, shows);
+            case "movies" -> queryMovies.queryMovies(action, movies, users);
+            case "shows" -> queryShows.queryShows(action, shows, users);
+            case "users" -> queryUsers.queryUsers(action, users);
+            default -> null;
+        };
     }
 }
