@@ -6,23 +6,35 @@ import entities.Show;
 import entities.User;
 import fileio.ActionInputData;
 
-import java.util.*;
+import java.util.ArrayList;
 
-public class Queries {
-    QueryMovies queryMovies;
-    QueryActors queryActors;
-    QueryShows queryShows;
-    QueryUsers queryUsers;
+public final class Queries {
+    private final QueryMovies queryMovies;
+    private final QueryActors queryActors;
+    private final QueryShows queryShows;
+    private final QueryUsers queryUsers;
+
     public Queries() {
         queryMovies = new QueryMovies();
         queryActors = new QueryActors();
         queryShows = new QueryShows();
         queryUsers = new QueryUsers();
     }
-    public String  query(ActionInputData action, ArrayList<Actor> actors,
-                         ArrayList<Movie> movies, ArrayList<Show> shows, ArrayList<User> users) {
-
-
+    /**
+     *
+     * @param action - action got from input
+     * @param actors - list of actors
+     * @param movies - list of movies
+     * @param shows - list of shows
+     * @param users - list of users
+     * @return <-- returns a string after processing the queries
+     */
+    public String query(
+        final ActionInputData action,
+        final ArrayList<Actor> actors,
+        final ArrayList<Movie> movies,
+        final ArrayList<Show> shows,
+        final ArrayList<User> users) {
         return switch (action.getObjectType()) {
             case "actors" -> queryActors.queryActors(action, actors, movies, shows);
             case "movies" -> queryMovies.queryMovies(action, movies, users);

@@ -5,31 +5,49 @@ import entities.Show;
 import entities.User;
 import fileio.ActionInputData;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
-public class QueryShows {
-    public String  queryShows(ActionInputData action, ArrayList<Show> shows, ArrayList<User> users) {
-        int count = action.getNumber();
+public final class QueryShows {
+    /**
+     *
+     * @param action - action got from input
+     * @param shows - list of shows
+     * @param users - list of users
+     * @return <-- returns a string after processing the queries for shows
+     */
+    public String queryShows(
+        final ActionInputData action,
+        final ArrayList<Show> shows,
+        final ArrayList<User> users) {
         if (action.getSortType().equals("asc")) {
             shows.sort(Comparator.comparing(Show::getTitle));
-        }
-        else {
+        } else {
             shows.sort(Comparator.comparing(Show::getTitle).reversed());
         }
 
         return switch (action.getCriteria()) {
-            case "ratings" -> ratingMethod(action, shows, count);
-            case "favorite" -> favoriteMethod(action, shows, users, count);
-            case "longest" -> longestMethod(action, shows, count);
-            case "most_viewed" -> mostViewedMethod(action, shows, users, count);
+            case "ratings" -> ratingMethod(action, shows);
+            case "favorite" -> favoriteMethod(action, shows, users);
+            case "longest" -> longestMethod(action, shows);
+            case "most_viewed" -> mostViewedMethod(action, shows, users);
             default -> null;
         };
     }
 
-    private String  ratingMethod(ActionInputData action, ArrayList<Show> shows, int count) {
+    private String ratingMethod(
+        final ActionInputData action,
+        final ArrayList<Show> shows) {
+        int count = action.getNumber();
         Map<Double, String> videoRating = new HashMap<>();
         for (Show show : shows) {
             double rate = 0;
@@ -56,14 +74,15 @@ public class QueryShows {
             }
             for (Show show : shows) {
                 if (show.getTitle().equals(rating.getValue())) {
-                    if (show.getGenres().toString().equals(action.getFilters().get(1).get(0))) {
-                        if (String.valueOf(show.getYear()).equals(action.getFilters().get(0).get(0))) {
+                    if (show.getGenres().toString()
+                            .equals(action.getFilters().get(1).get(0))) {
+                        if (String.valueOf(show.getYear())
+                                .equals(action.getFilters().get(0).get(0))) {
                             ratedVideosLen += 1;
                             ratedVideos.append(rating.getValue());
                             ratedVideos.append(", ");
                             count -= 1;
-                        }
-                        else if (action.getFilters().get(0).get(0) == null) {
+                        } else if (action.getFilters().get(0).get(0) == null) {
                             ratedVideosLen += 1;
                             ratedVideos.append(rating.getValue());
                             ratedVideos.append(", ");
@@ -84,7 +103,11 @@ public class QueryShows {
     }
 
 
-    private String  favoriteMethod(ActionInputData action, ArrayList<Show> shows, ArrayList<User> users, int count) {
+    private String favoriteMethod(
+        final ActionInputData action,
+        final ArrayList<Show> shows,
+        final ArrayList<User> users) {
+        int count = action.getNumber();
         for (User user : users) {
             for (String favorite : user.getFavoriteMovies()) {
                 for (Show show : shows) {
@@ -97,26 +120,26 @@ public class QueryShows {
         }
         Map<String, Integer> videoFavorite = new HashMap<>();
         for (Show show : shows) {
-            for (String genre : show.getGenres()){
-                if (action.getFilters().get(1).get(0) == null){
-                    if (String.valueOf(show.getYear()).equals(action.getFilters().get(0).get(0))){
+            for (String genre : show.getGenres()) {
+                if (action.getFilters().get(1).get(0) == null) {
+                    if (String.valueOf(show.getYear())
+                            .equals(action.getFilters().get(0).get(0))) {
+                        if (show.getNumFavorite() > 0) {
+                            videoFavorite.put(show.getTitle(), show.getNumFavorite());
+                        }
+                    } else if (action.getFilters().get(0).get(0) == null) {
                         if (show.getNumFavorite() > 0) {
                             videoFavorite.put(show.getTitle(), show.getNumFavorite());
                         }
                     }
-                    else if (action.getFilters().get(0).get(0) == null) {
+                } else if (action.getFilters().get(1).get(0).toLowerCase()
+                        .equals(genre.toLowerCase())) {
+                    if (String.valueOf(show.getYear())
+                            .equals(action.getFilters().get(0).get(0))) {
                         if (show.getNumFavorite() > 0) {
                             videoFavorite.put(show.getTitle(), show.getNumFavorite());
                         }
-                    }
-                }
-                else if (action.getFilters().get(1).get(0).toLowerCase().equals(genre.toLowerCase())){
-                    if (String.valueOf(show.getYear()).equals(action.getFilters().get(0).get(0))){
-                        if (show.getNumFavorite() > 0) {
-                            videoFavorite.put(show.getTitle(), show.getNumFavorite());
-                        }
-                    }
-                    else if (action.getFilters().get(0).get(0) == null) {
+                    } else if (action.getFilters().get(0).get(0) == null) {
                         if (show.getNumFavorite() > 0) {
                             videoFavorite.put(show.getTitle(), show.getNumFavorite());
                         }
@@ -131,7 +154,7 @@ public class QueryShows {
                     .entrySet()
                     .stream()
                     .sorted(comparingByValue())
-                    .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
 
         } else {
@@ -171,22 +194,26 @@ public class QueryShows {
     }
 
 
-    private String  longestMethod(ActionInputData action, ArrayList<Show> shows, int count) {
-        Map<String , Integer> videoLength = new HashMap<>();
+    private String longestMethod(
+        final ActionInputData action,
+        final ArrayList<Show> shows) {
+        int count = action.getNumber();
+        Map<String, Integer> videoLength = new HashMap<>();
         for (Show show : shows) {
             for (String genre : show.getGenres()) {
                 try {
-                    if (action.getFilters().get(1).get(0).toLowerCase().equals(genre.toLowerCase())) {
-                        if (String.valueOf(show.getYear()).equals(action.getFilters().get(0).get(0))) {
+                    if (action.getFilters().get(1).get(0).toLowerCase()
+                            .equals(genre.toLowerCase())) {
+                        if (String.valueOf(show.getYear())
+                                .equals(action.getFilters().get(0).get(0))) {
                             int duration = 0;
-                            for (Season season : show.getSeason()){
+                            for (Season season : show.getSeason()) {
                                 duration += season.getDuration();
                             }
                             videoLength.put(show.getTitle(), duration);
-                        }
-                        else if (action.getFilters().get(0).get(0) == null) {
+                        } else if (action.getFilters().get(0).get(0) == null) {
                             int duration = 0;
-                            for (Season season : show.getSeason()){
+                            for (Season season : show.getSeason()) {
                                 duration += season.getDuration();
                             }
                             videoLength.put(show.getTitle(), duration);
@@ -203,7 +230,7 @@ public class QueryShows {
                     .entrySet()
                     .stream()
                     .sorted(comparingByValue())
-                    .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
 
         } else {
@@ -219,7 +246,7 @@ public class QueryShows {
         StringBuilder videoLen = new StringBuilder();
         int index = 0;
         videoLen.append("Query result: [");
-        for (Map.Entry<String , Integer> favoriteVid : sorted.entrySet()) {
+        for (Map.Entry<String, Integer> favoriteVid : sorted.entrySet()) {
             if (count == 0) {
                 break;
             }
@@ -242,12 +269,16 @@ public class QueryShows {
         return videoLen.toString();
     }
 
-    private String  mostViewedMethod(ActionInputData action, ArrayList<Show> shows, ArrayList<User> users, int count) {
+    private String mostViewedMethod(
+        final ActionInputData action,
+        final ArrayList<Show> shows,
+        final ArrayList<User> users) {
+        int count = action.getNumber();
         for (User user : users) {
             for (Map.Entry<String, Integer> entry : user.getHistory().entrySet()) {
                 for (Show show : shows) {
                     if (entry.getKey().equals(show.getTitle())) {
-                        show.numViews += entry.getValue();
+                        show.setNumViews(show.getNumViews() + entry.getValue());
                         break;
                     }
                 }
@@ -257,15 +288,16 @@ public class QueryShows {
         for (Show show : shows) {
             for (String genre : show.getGenres()) {
                 try {
-                    if (action.getFilters().get(1).get(0).toLowerCase().equals(genre.toLowerCase())) {
-                        if (String.valueOf(show.getYear()).equals(action.getFilters().get(0).get(0))) {
-                            if (show.numViews > 0) {
-                                videoViews.put(show.getTitle(), show.numViews);
+                    if (action.getFilters().get(1).get(0).toLowerCase()
+                            .equals(genre.toLowerCase())) {
+                        if (String.valueOf(show.getYear())
+                                .equals(action.getFilters().get(0).get(0))) {
+                            if (show.getNumViews() > 0) {
+                                videoViews.put(show.getTitle(), show.getNumViews());
                             }
-                        }
-                        else if (action.getFilters().get(0).get(0) == null) {
-                            if (show.numViews > 0) {
-                                videoViews.put(show.getTitle(), show.numViews);
+                        } else if (action.getFilters().get(0).get(0) == null) {
+                            if (show.getNumViews() > 0) {
+                                videoViews.put(show.getTitle(), show.getNumViews());
                             }
                         }
                     }
@@ -280,7 +312,7 @@ public class QueryShows {
                     .entrySet()
                     .stream()
                     .sorted(comparingByValue())
-                    .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
 
         } else {
@@ -296,7 +328,7 @@ public class QueryShows {
         StringBuilder favVideos = new StringBuilder();
         int favFid = 0;
         favVideos.append("Query result: [");
-        for (Map.Entry<String , Integer> favoriteVid : sorted.entrySet()) {
+        for (Map.Entry<String, Integer> favoriteVid : sorted.entrySet()) {
             if (count == 0) {
                 break;
             }

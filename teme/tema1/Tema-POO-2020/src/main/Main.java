@@ -24,90 +24,87 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * The entry point to this homework. It runs the checker that tests your implentation.
- */
+/** The entry point to this homework. It runs the checker that tests your implentation. */
 public final class Main {
-    /**
-     * for coding style
-     */
-    private Main() {
+  /** for coding style */
+  private Main() { }
+
+  /**
+   * Call the main checker and the coding style checker
+   *
+   * @param args from command line
+   * @throws IOException in case of exceptions to reading / writing
+   */
+  public static void main(final String[] args) throws IOException {
+    File directory = new File(Constants.TESTS_PATH);
+    Path path = Paths.get(Constants.RESULT_PATH);
+    if (!Files.exists(path)) {
+      Files.createDirectories(path);
     }
 
-    /**
-     * Call the main checker and the coding style checker
-     * @param args from command line
-     * @throws IOException in case of exceptions to reading / writing
-     */
-    public static void main(final String[] args) throws IOException {
-        File directory = new File(Constants.TESTS_PATH);
-        Path path = Paths.get(Constants.RESULT_PATH);
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
-        }
+    File outputDirectory = new File(Constants.RESULT_PATH);
 
-        File outputDirectory = new File(Constants.RESULT_PATH);
+    Checker checker = new Checker();
+    checker.deleteFiles(outputDirectory.listFiles());
 
-        Checker checker = new Checker();
-        checker.deleteFiles(outputDirectory.listFiles());
+    for (File file : Objects.requireNonNull(directory.listFiles())) {
 
-        for (File file : Objects.requireNonNull(directory.listFiles())) {
-
-            String filepath = Constants.OUT_PATH + file.getName();
-            File out = new File(filepath);
-            boolean isCreated = out.createNewFile();
-            if (isCreated) {
-                action(file.getAbsolutePath(), filepath);
-            }
-        }
-
-        checker.iterateFiles(Constants.RESULT_PATH, Constants.REF_PATH, Constants.TESTS_PATH);
-        Checkstyle test = new Checkstyle();
-        test.testCheckstyle();
+      String filepath = Constants.OUT_PATH + file.getName();
+      File out = new File(filepath);
+      boolean isCreated = out.createNewFile();
+      if (isCreated) {
+        action(file.getAbsolutePath(), filepath);
+      }
     }
 
-    /**
-     * @param filePath1 for input file
-     * @param filePath2 for output file
-     * @throws IOException in case of exceptions to reading / writing
-     */
-    public static void action(final String filePath1,
-                              final String filePath2) throws IOException {
-        InputLoader inputLoader = new InputLoader(filePath1);
-        Input input = inputLoader.readData();
+    checker.iterateFiles(Constants.RESULT_PATH, Constants.REF_PATH, Constants.TESTS_PATH);
+    Checkstyle test = new Checkstyle();
+    test.testCheckstyle();
+  }
 
-        Writer fileWriter = new Writer(filePath2);
-        JSONArray arrayResult = new JSONArray();
+  /**
+   * @param filePath1 for input file
+   * @param filePath2 for output file
+   * @throws IOException in case of exceptions to reading / writing
+   */
+  public static void action(final String filePath1, final String filePath2) throws IOException {
+    InputLoader inputLoader = new InputLoader(filePath1);
+    Input input = inputLoader.readData();
 
-        //TODO add here the entry point to your implementation
-        ArrayList<Actor> actors = new ArrayList<>();
-        ArrayList<Movie> movies = new ArrayList<>();
-        ArrayList<Show> shows = new ArrayList<>();
-        ArrayList<User> users = new ArrayList<>();
-        List<ActionInputData> actions = input.getCommands();
-        Solve solve = new Solve();
-        for (int i = 0; i < input.getActors().size(); i++) {
-            Actor actor = new Actor(i, input);
-            actors.add(i, actor);
-        }
-        for (int i = 0; i < input.getMovies().size(); i++) {
-            Movie movie = new Movie(i, input);
-            movies.add(i, movie);
-        }
-        for (int i = 0; i < input.getSerials().size(); i++) {
-            Show show = new Show(i, input);
-            shows.add(i, show);
-        }
-        for (int i = 0; i < input.getUsers().size(); i++) {
-            User user = new User(i, input);
-            users.add(i, user);
-        }
+    Writer fileWriter = new Writer(filePath2);
+    JSONArray arrayResult = new JSONArray();
 
-        for (ActionInputData action : actions) {
-            JSONObject object = fileWriter.writeFile(action.getActionId(),
-                    action.getCriteria(), solve.solve(action, users, movies, shows, actors));
-            arrayResult.add(object);
-        }
-        fileWriter.closeJSON(arrayResult);
+    ArrayList<Actor> actors = new ArrayList<>();
+    ArrayList<Movie> movies = new ArrayList<>();
+    ArrayList<Show> shows = new ArrayList<>();
+    ArrayList<User> users = new ArrayList<>();
+    List<ActionInputData> actions = input.getCommands();
+    Solve solve = new Solve();
+    for (int i = 0; i < input.getActors().size(); i++) {
+      Actor actor = new Actor(i, input);
+      actors.add(i, actor);
     }
+    for (int i = 0; i < input.getMovies().size(); i++) {
+      Movie movie = new Movie(i, input);
+      movies.add(i, movie);
+    }
+    for (int i = 0; i < input.getSerials().size(); i++) {
+      Show show = new Show(i, input);
+      shows.add(i, show);
+    }
+    for (int i = 0; i < input.getUsers().size(); i++) {
+      User user = new User(i, input);
+      users.add(i, user);
+    }
+
+    for (ActionInputData action : actions) {
+      JSONObject object =
+          fileWriter.writeFile(
+              action.getActionId(),
+              action.getCriteria(),
+              solve.solve(action, users, movies, shows, actors));
+      arrayResult.add(object);
+    }
+    fileWriter.closeJSON(arrayResult);
+  }
 }

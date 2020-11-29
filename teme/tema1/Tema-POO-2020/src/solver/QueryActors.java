@@ -10,10 +10,25 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 
-public class QueryActors {
-    public String  queryActors(ActionInputData action, ArrayList<Actor> actors,
-                         ArrayList<Movie> movies, ArrayList<Show> shows) {
+public final class QueryActors {
+    private final int positionZero = 0;
+    private final int positionOne = 1;
+    private final int positionTwo = 2;
+    private final int positionThree = 3;
 
+    /**
+     *
+     * @param action - action got from input
+     * @param actors - list of actors
+     * @param movies - list of movies
+     * @param shows - list of shows
+     * @return <-- returns a string after processing the queries for actors
+     */
+    public String queryActors(
+        final ActionInputData action,
+        final ArrayList<Actor> actors,
+        final ArrayList<Movie> movies,
+        final ArrayList<Show> shows) {
         return switch (action.getCriteria()) {
             case "average" -> averageActors(action, actors, movies, shows);
             case "awards" -> awardsActors(action, actors);
@@ -22,8 +37,11 @@ public class QueryActors {
         };
     }
 
-    private String  averageActors(ActionInputData action, ArrayList<Actor> actors,
-                               ArrayList<Movie> movies, ArrayList<Show> shows) {
+    private String averageActors(
+        final ActionInputData action,
+        final ArrayList<Actor> actors,
+        final ArrayList<Movie> movies,
+        final ArrayList<Show> shows) {
         for (Actor actor : actors) {
             double avg = 0;
             int num = 0;
@@ -107,11 +125,12 @@ public class QueryActors {
         return null;
     }
 
-    private String  awardsActors(ActionInputData action, ArrayList<Actor> actors) {
+    private String awardsActors(
+        final ActionInputData action,
+        final ArrayList<Actor> actors) {
         if (action.getSortType().equals("asc")) {
             actors.sort(Comparator.comparing(Actor::getName));
-        }
-        else {
+        } else {
             actors.sort(Comparator.comparing(Actor::getName).reversed());
         }
 
@@ -129,18 +148,18 @@ public class QueryActors {
             actors.sort(Comparator.comparing(Actor::getNumAwards).reversed());
         }
         for (Actor actor : actors) {
-            if (actor.getAwards().size() < action.getFilters().get(3).size()) {
+            if (actor.getAwards().size() < action.getFilters().get(positionThree).size()) {
                 continue;
             }
             int check = 0;
             for (Map.Entry<ActorsAwards, Integer> entry : actor.getAwards().entrySet()) {
-                for (String award : action.getFilters().get(3)) {
+                for (String award : action.getFilters().get(positionThree)) {
                     if (award.equals(entry.getKey().toString())) {
                         check += 1;
                     }
                 }
             }
-            if (check == action.getFilters().get(3).size()) {
+            if (check == action.getFilters().get(positionThree).size()) {
                 actorListLen += 1;
                 actorList.append(actor.getName());
                 actorList.append(", ");
@@ -156,11 +175,12 @@ public class QueryActors {
         return actorList.toString();
     }
 
-    private String  filteredActors(ActionInputData action, ArrayList<Actor> actors) {
+    private String filteredActors(
+        final ActionInputData action,
+        final ArrayList<Actor> actors) {
         if (action.getSortType().equals("asc")) {
             actors.sort(Comparator.comparing(Actor::getName));
-        }
-        else {
+        } else {
             actors.sort(Comparator.comparing(Actor::getName).reversed());
         }
         StringBuilder actorList = new StringBuilder();
@@ -169,7 +189,7 @@ public class QueryActors {
         for (Actor actor : actors) {
             int check = 0;
             for (String word : action.getFilters().get(2)) {
-                String []sentence = actor.getCareerDescription().split("\\W+");
+                String[] sentence = actor.getCareerDescription().split("\\W+");
                 for (String description : sentence) {
                     if (description.toLowerCase().equals(word.toLowerCase())) {
                         check += 1;

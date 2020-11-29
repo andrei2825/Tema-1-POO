@@ -4,35 +4,49 @@ import entities.Movie;
 import entities.User;
 import fileio.ActionInputData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
-public class QueryMovies {
-    public String  queryMovies(ActionInputData action,
-                               ArrayList<Movie> movies, ArrayList<User> users) {
-
-        int count = action.getNumber();
+public final class QueryMovies {
+    /**
+     *
+     * @param action - action got from input
+     * @param movies - list of movies
+     * @param users - list of users
+     * @return <-- returns a string after processing the queries for movies
+     */
+    public String queryMovies(
+        final ActionInputData action,
+        final ArrayList<Movie> movies,
+        final ArrayList<User> users) {
 
         if (action.getSortType().equals("asc")) {
             movies.sort(Comparator.comparing(Movie::getName));
-        }
-        else {
+        } else {
             movies.sort(Comparator.comparing(Movie::getName).reversed());
         }
 
         return switch (action.getCriteria()) {
-            case "ratings" -> ratingMethod(action, movies, count);
-            case "favorite" -> favoriteMethod(action, movies, users, count);
-            case "longest" -> longestMethod(action, movies, count);
-            case "most_viewed" -> mostViewedMethod(action, movies, users, count);
+            case "ratings" -> ratingMethod(action, movies);
+            case "favorite" -> favoriteMethod(action, movies, users);
+            case "longest" -> longestMethod(action, movies);
+            case "most_viewed" -> mostViewedMethod(action, movies, users);
             default -> null;
         };
     }
 
-    private String ratingMethod(ActionInputData action,
-                                ArrayList<Movie> movies, int count) {
+    private String ratingMethod(
+        final ActionInputData action,
+        final ArrayList<Movie> movies) {
+        int count = action.getNumber();
         Map<Double, String> videoRating = new HashMap<>();
         for (Movie movie : movies) {
             videoRating.put(movie.getRating(), movie.getName());
@@ -55,29 +69,30 @@ public class QueryMovies {
             }
             for (Movie movie : movies) {
                 if (movie.getName().equals(rating.getValue())) {
-                    if (movie.getGenres().toString().equals(action.getFilters().get(1).get(0))) {
-                        if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
+                    if (movie.getGenres().toString()
+                            .equals(action.getFilters().get(1).get(0))) {
+                        if (String.valueOf(movie.getYear())
+                                .equals(action.getFilters().get(0).get(0))) {
                             ratedVideosLen += 1;
                             ratedVideos.append(rating.getValue());
                             ratedVideos.append(", ");
                             count -= 1;
-                        }
-                        else if (action.getFilters().get(0).get(0) == null) {
+                        } else if (action.getFilters().get(0).get(0) == null) {
                             ratedVideosLen += 1;
                             ratedVideos.append(rating.getValue());
                             ratedVideos.append(", ");
                             count -= 1;
                         }
                     }
-                    if (action.getFilters().get(1).get(0).length() == 0 ||
-                            action.getFilters().get(1).get(0) == null) {
-                        if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
+                    if (action.getFilters().get(1).get(0).length() == 0
+                            || action.getFilters().get(1).get(0) == null) {
+                        if (String.valueOf(movie.getYear())
+                                .equals(action.getFilters().get(0).get(0))) {
                             ratedVideosLen += 1;
                             ratedVideos.append(rating.getValue());
                             ratedVideos.append(", ");
                             count -= 1;
-                        }
-                        else if (action.getFilters().get(0).get(0) == null) {
+                        } else if (action.getFilters().get(0).get(0) == null) {
                             ratedVideosLen += 1;
                             ratedVideos.append(rating.getValue());
                             ratedVideos.append(", ");
@@ -97,8 +112,11 @@ public class QueryMovies {
         return ratedVideos.toString();
     }
 
-    private String  favoriteMethod(ActionInputData action,
-                                  ArrayList<Movie> movies, ArrayList<User> users, int count) {
+    private String favoriteMethod(
+        final ActionInputData action,
+        final ArrayList<Movie> movies,
+        final ArrayList<User> users) {
+        int count = action.getNumber();
         for (User user : users) {
             for (String favorite : user.getFavoriteMovies()) {
                 for (Movie movie : movies) {
@@ -109,28 +127,28 @@ public class QueryMovies {
                 }
             }
         }
-        LinkedHashMap<String , Integer> videoFavorite = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> videoFavorite = new LinkedHashMap<>();
         for (Movie movie : movies) {
             for (String genre : movie.getGenres()) {
                 if (action.getFilters().get(1).get(0) == null) {
-                    if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
+                    if (String.valueOf(movie.getYear())
+                            .equals(action.getFilters().get(0).get(0))) {
+                        if (movie.getNumFavorite() > 0) {
+                            videoFavorite.put(movie.getName(), movie.getNumFavorite());
+                        }
+                    } else if (action.getFilters().get(0).get(0) == null) {
                         if (movie.getNumFavorite() > 0) {
                             videoFavorite.put(movie.getName(), movie.getNumFavorite());
                         }
                     }
-                    else if (action.getFilters().get(0).get(0) == null) {
+                } else if (action.getFilters().get(1).get(0)
+                        .toLowerCase().equals(genre.toLowerCase())) {
+                    if (String.valueOf(movie.getYear())
+                            .equals(action.getFilters().get(0).get(0))) {
                         if (movie.getNumFavorite() > 0) {
                             videoFavorite.put(movie.getName(), movie.getNumFavorite());
                         }
-                    }
-                }
-                else if (action.getFilters().get(1).get(0).toLowerCase().equals(genre.toLowerCase())) {
-                    if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
-                        if (movie.getNumFavorite() > 0) {
-                            videoFavorite.put(movie.getName(), movie.getNumFavorite());
-                        }
-                    }
-                    else if (action.getFilters().get(0).get(0) == null) {
+                    } else if (action.getFilters().get(0).get(0) == null) {
                         if (movie.getNumFavorite() > 0) {
                             videoFavorite.put(movie.getName(), movie.getNumFavorite());
                         }
@@ -144,7 +162,7 @@ public class QueryMovies {
                     .entrySet()
                     .stream()
                     .sorted(comparingByValue())
-                    .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
 
         } else {
@@ -160,7 +178,7 @@ public class QueryMovies {
         StringBuilder favVideos = new StringBuilder();
         int favFid = 0;
         favVideos.append("Query result: [");
-        for (Map.Entry<String , Integer> favoriteVid : sorted.entrySet()) {
+        for (Map.Entry<String, Integer> favoriteVid : sorted.entrySet()) {
             if (count == 0) {
                 break;
             }
@@ -183,23 +201,26 @@ public class QueryMovies {
         return favVideos.toString();
     }
 
-    private String  longestMethod(ActionInputData action, ArrayList<Movie> movies, int count) {
+    private String longestMethod(
+        final ActionInputData action,
+        final ArrayList<Movie> movies) {
+        int count = action.getNumber();
         Map<String, Integer> videoLength = new HashMap<>();
         for (Movie movie : movies) {
             for (String genre : movie.getGenres()) {
                 if (action.getFilters().get(1).get(0) == null) {
-                    if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
+                    if (String.valueOf(movie.getYear())
+                            .equals(action.getFilters().get(0).get(0))) {
+                        videoLength.put(movie.getName(), movie.getDuration());
+                    } else if (action.getFilters().get(0).get(0) == null) {
                         videoLength.put(movie.getName(), movie.getDuration());
                     }
-                    else if (action.getFilters().get(0).get(0) == null) {
+                } else if (action.getFilters().get(1).get(0).toLowerCase()
+                        .equals(genre.toLowerCase())) {
+                    if (String.valueOf(movie.getYear())
+                            .equals(action.getFilters().get(0).get(0))) {
                         videoLength.put(movie.getName(), movie.getDuration());
-                    }
-                }
-                else if (action.getFilters().get(1).get(0).toLowerCase().equals(genre.toLowerCase())) {
-                    if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
-                        videoLength.put(movie.getName(), movie.getDuration());
-                    }
-                    else if (action.getFilters().get(0).get(0) == null) {
+                    } else if (action.getFilters().get(0).get(0) == null) {
                         videoLength.put(movie.getName(), movie.getDuration());
                     }
                 }
@@ -211,7 +232,7 @@ public class QueryMovies {
                     .entrySet()
                     .stream()
                     .sorted(comparingByValue())
-                    .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
 
         } else {
@@ -227,7 +248,7 @@ public class QueryMovies {
         StringBuilder videoLen = new StringBuilder();
         int index = 0;
         videoLen.append("Query result: [");
-        for (Map.Entry<String , Integer> favoriteVid : sorted.entrySet()) {
+        for (Map.Entry<String, Integer> favoriteVid : sorted.entrySet()) {
             if (count == 0) {
                 break;
             }
@@ -250,13 +271,16 @@ public class QueryMovies {
         return videoLen.toString();
     }
 
-    private String  mostViewedMethod(ActionInputData action,
-                                     ArrayList<Movie> movies, ArrayList<User> users, int count) {
+    private String mostViewedMethod(
+        final ActionInputData action,
+        final ArrayList<Movie> movies,
+        final ArrayList<User> users) {
+        int count = action.getNumber();
         for (User user : users) {
             for (Map.Entry<String, Integer> entry : user.getHistory().entrySet()) {
                 for (Movie movie : movies) {
                     if (entry.getKey().equals(movie.getName())) {
-                        movie.numViews += entry.getValue();
+                        movie.setNumViews(movie.getNumViews() + entry.getValue());
                         break;
                     }
                 }
@@ -266,15 +290,16 @@ public class QueryMovies {
         for (Movie movie : movies) {
             for (String genre : movie.getGenres()) {
                 try {
-                    if (action.getFilters().get(1).get(0).toLowerCase().equals(genre.toLowerCase())) {
-                        if (String.valueOf(movie.getYear()).equals(action.getFilters().get(0).get(0))) {
-                            if (movie.numViews > 0) {
-                                videoViews.put(movie.getName(), movie.numViews);
+                    if (action.getFilters().get(1).get(0).toLowerCase()
+                            .equals(genre.toLowerCase())) {
+                        if (String.valueOf(movie.getYear())
+                                .equals(action.getFilters().get(0).get(0))) {
+                            if (movie.getNumViews() > 0) {
+                                videoViews.put(movie.getName(), movie.getNumViews());
                             }
-                        }
-                        else if (action.getFilters().get(0).get(0) == null) {
-                            if (movie.numViews > 0) {
-                                videoViews.put(movie.getName(), movie.numViews);
+                        } else if (action.getFilters().get(0).get(0) == null) {
+                            if (movie.getNumViews() > 0) {
+                                videoViews.put(movie.getName(), movie.getNumViews());
                             }
                         }
                     }
@@ -289,7 +314,7 @@ public class QueryMovies {
                     .entrySet()
                     .stream()
                     .sorted(comparingByValue())
-                    .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
 
         } else {
@@ -305,7 +330,7 @@ public class QueryMovies {
         StringBuilder favVideos = new StringBuilder();
         int favFid = 0;
         favVideos.append("Query result: [");
-        for (Map.Entry<String , Integer> favoriteVid : sorted.entrySet()) {
+        for (Map.Entry<String, Integer> favoriteVid : sorted.entrySet()) {
             if (count == 0) {
                 break;
             }

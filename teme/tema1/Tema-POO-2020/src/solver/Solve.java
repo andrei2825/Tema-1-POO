@@ -8,12 +8,26 @@ import fileio.ActionInputData;
 
 import java.util.ArrayList;
 
-public class Solve {
-    Commands commands = new Commands();
-    Queries queries = new Queries();
-    Recommendations recommendations = new Recommendations();
-    public String solve(ActionInputData action, ArrayList<User> users,
-                          ArrayList<Movie> movies, ArrayList<Show> shows, ArrayList<Actor> actors) {
+public final class Solve {
+    private final Commands commands = new Commands();
+    private final Queries queries = new Queries();
+    private final Recommendations recommendations = new Recommendations();
+
+    /**
+     *
+     * @param action - action got from input
+     * @param actors - list of actors
+     * @param movies - list of movies
+     * @param shows - list of shows
+     * @param users - list of users
+     * @return <-- returns a string after processing the action
+     */
+    public String solve(
+        final ActionInputData action,
+        final ArrayList<User> users,
+        final ArrayList<Movie> movies,
+        final ArrayList<Show> shows,
+        final ArrayList<Actor> actors) {
         return switch (action.getActionType()) {
             case "command" -> commands.command(action, users, movies, shows);
             case "query" -> queries.query(action, actors, movies, shows, users);
