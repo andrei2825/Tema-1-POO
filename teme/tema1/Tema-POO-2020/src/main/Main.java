@@ -1,0 +1,117 @@
+package main;
+
+import checker.Checker;
+import checker.Checkstyle;
+import common.Constants;
+import entities.Actor;
+import entities.Movie;
+import entities.Show;
+import entities.User;
+import fileio.ActionInputData;
+import fileio.Input;
+import fileio.InputLoader;
+import fileio.Writer;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import solver.Solve;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/** The entry point to this homework. It runs the checker that tests your implentation. */
+public final class Main {
+  /** for coding style */
+  private Main() { }
+
+  /**
+   * Call the main checker and the coding style checker
+   *
+   * @param args from command line
+   * @throws IOException in case of exceptions to reading / writing
+   */
+  public static void main(final String[] args) throws IOException {
+    File directory = new File(Constants.TESTS_PATH);
+    Path path = Paths.get(Constants.RESULT_PATH);
+    if (!Files.exists(path)) {
+      Files.createDirectories(path);
+    }
+
+    File outputDirectory = new File(Constants.RESULT_PATH);
+
+    Checker checker = new Checker();
+    checker.deleteFiles(outputDirectory.listFiles());
+
+    for (File file : Objects.requireNonNull(directory.listFiles())) {
+
+      String filepath = Constants.OUT_PATH + file.getName();
+      File out = new File(filepath);
+      boolean isCreated = out.createNewFile();
+      if (isCreated) {
+        action(file.getAbsolutePath(), filepath);
+      }
+    }
+
+    checker.iterateFiles(Constants.RESULT_PATH, Constants.REF_PATH, Constants.TESTS_PATH);
+    Checkstyle test = new Checkstyle();
+    test.testCheckstyle();
+  }
+
+  /**
+   * @param filePath1 for input file
+   * @param filePath2 for output file
+   * @throws IOException in case of exceptions to reading / writing
+   */
+  public static void action(final String filePath1, final String filePath2) throws IOException {
+    InputLoader inputLoader = new InputLoader(filePath1);
+    Input input = inputLoader.readData();
+
+    Writer fileWriter = new Writer(filePath2);
+    JSONArray arrayResult = new JSONArray();
+
+    //Creare obiecte in care voi stoca in informatia din input
+
+    ArrayList<Actor> actors = new ArrayList<>();
+    ArrayList<Movie> movies = new ArrayList<>();
+    ArrayList<Show> shows = new ArrayList<>();
+    ArrayList<User> users = new ArrayList<>();
+    List<ActionInputData> actions = input.getCommands();
+    Solve solve = new Solve();
+
+    //Adaug inputului in obiectele create
+
+    for (int i = 0; i < input.getActors().size(); i++) {
+      Actor actor = new Actor(i, input);
+      actors.add(i, actor);
+    }
+    for (int i = 0; i < input.getMovies().size(); i++) {
+      Movie movie = new Movie(i, input);
+      movies.add(i, movie);
+    }
+    for (int i = 0; i < input.getSerials().size(); i++) {
+      Show show = new Show(i, input);
+      shows.add(i, show);
+    }
+    for (int i = 0; i < input.getUsers().size(); i++) {
+      User user = new User(i, input);
+      users.add(i, user);
+    }
+
+    //Functie ce printeaza in fisierul de output rezultatul rezolvarii mele
+
+    for (ActionInputData action : actions) {
+      JSONObject object =
+          fileWriter.writeFile(
+              action.getActionId(),
+              action.getCriteria(),
+              solve.solve(action, users, movies, shows, actors));
+      arrayResult.add(object);
+    }
+    fileWriter.closeJSON(arrayResult);
+  }
+}
