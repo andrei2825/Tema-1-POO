@@ -69,6 +69,7 @@ public final class Constants {
   public static final int SINGLE_TEST = 2;
   public static final int LARGE_TEST = 3;
   public static final int MAX_LENGTH = 50;
+
   private Constants() { }
 
   // add any constants you think you may use

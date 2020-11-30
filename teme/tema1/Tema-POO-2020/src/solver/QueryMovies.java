@@ -47,10 +47,12 @@ public final class QueryMovies {
         final ActionInputData action,
         final ArrayList<Movie> movies) {
         int count = action.getNumber();
+        //Creez un map in care pun toate filmele
         Map<Double, String> videoRating = new HashMap<>();
         for (Movie movie : movies) {
             videoRating.put(movie.getRating(), movie.getName());
         }
+        //Ordonez acest map
         Map<Double, String> treeMap;
         if (action.getSortType().equals("asc")) {
             treeMap = new TreeMap<>(videoRating);
@@ -68,6 +70,7 @@ public final class QueryMovies {
                 break;
             }
             for (Movie movie : movies) {
+                //Aplic filtrele de gen si an
                 if (movie.getName().equals(rating.getValue())) {
                     if (movie.getGenres().toString()
                             .equals(action.getFilters().get(1).get(0))) {
@@ -117,6 +120,8 @@ public final class QueryMovies {
         final ArrayList<Movie> movies,
         final ArrayList<User> users) {
         int count = action.getNumber();
+        //Incarc campul din clasa movie cu numarul de aparitii
+        // al acestuia in listele de favorite ale utilizatorilor
         for (User user : users) {
             for (String favorite : user.getFavoriteMovies()) {
                 for (Movie movie : movies) {
@@ -127,9 +132,12 @@ public final class QueryMovies {
                 }
             }
         }
+        //Creez un LinkedHashMap pentru a pastra ordinea
+        //de introducere a datelor in memorie
         LinkedHashMap<String, Integer> videoFavorite = new LinkedHashMap<>();
         for (Movie movie : movies) {
             for (String genre : movie.getGenres()) {
+                //Aplic filtrele si adaug filmele in map
                 if (action.getFilters().get(1).get(0) == null) {
                     if (String.valueOf(movie.getYear())
                             .equals(action.getFilters().get(0).get(0))) {
@@ -156,6 +164,7 @@ public final class QueryMovies {
                 }
             }
         }
+        //Sortez mapul
         Map<String, Integer> sorted;
         if (action.getSortType().equals("asc")) {
             sorted = videoFavorite
@@ -175,6 +184,7 @@ public final class QueryMovies {
                                     LinkedHashMap::new));
 
         }
+        //Returnez primele n filme din lista
         StringBuilder favVideos = new StringBuilder();
         int favFid = 0;
         favVideos.append("Query result: [");
@@ -206,6 +216,7 @@ public final class QueryMovies {
         final ArrayList<Movie> movies) {
         int count = action.getNumber();
         Map<String, Integer> videoLength = new HashMap<>();
+        //Adaug elementele filtrate intr-un map cu numele si durata lor
         for (Movie movie : movies) {
             for (String genre : movie.getGenres()) {
                 if (action.getFilters().get(1).get(0) == null) {
@@ -226,6 +237,7 @@ public final class QueryMovies {
                 }
             }
         }
+        //Sortez elementele din map
         Map<String, Integer> sorted;
         if (action.getSortType().equals("asc")) {
             sorted = videoLength
@@ -245,6 +257,7 @@ public final class QueryMovies {
                                     LinkedHashMap::new));
 
         }
+        //Returnez primele n elemente din map
         StringBuilder videoLen = new StringBuilder();
         int index = 0;
         videoLen.append("Query result: [");

@@ -22,12 +22,17 @@ public final class Solve {
      * @param users - list of users
      * @return <-- returns a string after processing the action
      */
+
+    //In aceasta metoda se stabileste tipul comenzii primite si apeleaza o metoda dintr-o clasa
+    //corespunzatoare
+
     public String solve(
         final ActionInputData action,
         final ArrayList<User> users,
         final ArrayList<Movie> movies,
         final ArrayList<Show> shows,
         final ArrayList<Actor> actors) {
+        //Switch ce apelewaza metodele necesare rezolvarii
         return switch (action.getActionType()) {
             case "command" -> commands.command(action, users, movies, shows);
             case "query" -> queries.query(action, actors, movies, shows, users);

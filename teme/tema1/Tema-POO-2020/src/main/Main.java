@@ -74,12 +74,17 @@ public final class Main {
     Writer fileWriter = new Writer(filePath2);
     JSONArray arrayResult = new JSONArray();
 
+    //Creare obiecte in care voi stoca in informatia din input
+
     ArrayList<Actor> actors = new ArrayList<>();
     ArrayList<Movie> movies = new ArrayList<>();
     ArrayList<Show> shows = new ArrayList<>();
     ArrayList<User> users = new ArrayList<>();
     List<ActionInputData> actions = input.getCommands();
     Solve solve = new Solve();
+
+    //Adaug inputului in obiectele create
+
     for (int i = 0; i < input.getActors().size(); i++) {
       Actor actor = new Actor(i, input);
       actors.add(i, actor);
@@ -96,6 +101,8 @@ public final class Main {
       User user = new User(i, input);
       users.add(i, user);
     }
+
+    //Functie ce printeaza in fisierul de output rezultatul rezolvarii mele
 
     for (ActionInputData action : actions) {
       JSONObject object =

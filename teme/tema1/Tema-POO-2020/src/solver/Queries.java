@@ -35,6 +35,7 @@ public final class Queries {
         final ArrayList<Movie> movies,
         final ArrayList<Show> shows,
         final ArrayList<User> users) {
+        //Apelez metodele necesare pentru rezolvarea fiecarui tip de query
         return switch (action.getObjectType()) {
             case "actors" -> queryActors.queryActors(action, actors, movies, shows);
             case "movies" -> queryMovies.queryMovies(action, movies, users);

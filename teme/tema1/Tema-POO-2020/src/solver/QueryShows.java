@@ -25,6 +25,8 @@ public final class QueryShows {
      * @param users - list of users
      * @return <-- returns a string after processing the queries for shows
      */
+    //Show este foarte asemanator cu Movie, din aceasta
+    //cauza codul semanand destul de mult
     public String queryShows(
         final ActionInputData action,
         final ArrayList<Show> shows,

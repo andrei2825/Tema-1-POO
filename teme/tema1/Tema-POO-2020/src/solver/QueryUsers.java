@@ -3,7 +3,6 @@ package solver;
 import entities.User;
 import fileio.ActionInputData;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,20 +14,20 @@ import static java.util.stream.Collectors.toMap;
 
 public final class QueryUsers {
   /**
-   *
    * @param action - action got from input
    * @param users - list of users
    * @return <-- returns a string after processing the queries for users
    */
-  public String queryUsers(
-      final ActionInputData action,
-      final ArrayList<User> users) {
+  public String queryUsers(final ActionInputData action, final ArrayList<User> users) {
+    //Urdonez alfabetic userii
     if (action.getSortType().equals("asc")) {
       users.sort(Comparator.comparing(User::getUsername));
     } else {
       users.sort(Comparator.comparing(User::getUsername).reversed());
     }
     int count = action.getNumber();
+    //Adaug numele userilor si numarul de ratinguri date de acestia
+    //intr-un LinkedHashMap pentru a pastra ordinea acestora
     LinkedHashMap<String, Integer> userRatings = new LinkedHashMap<>();
     for (User user : users) {
       if (user.getRatedIndex() >= 0) {
@@ -36,6 +35,7 @@ public final class QueryUsers {
       }
     }
     Map<String, Integer> sorted;
+    //Sortez elementele din map
     if (action.getSortType().equals("asc")) {
       sorted =
           userRatings.entrySet().stream()
@@ -54,6 +54,7 @@ public final class QueryUsers {
     }
     StringBuilder numRating = new StringBuilder();
     int index = 0;
+    //Adaug intr-un string builder primele N nume din map
     numRating.append("Query result: [");
     for (Map.Entry<String, Integer> rating : sorted.entrySet()) {
       if (count == 0) {

@@ -5,7 +5,6 @@ import entities.Show;
 import entities.User;
 import fileio.ActionInputData;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,7 +16,6 @@ import static java.util.stream.Collectors.toMap;
 
 public final class Recommendations {
   /**
-   *
    * @param action - action got from input
    * @param movies - list of movies
    * @param shows - list of shows
@@ -29,27 +27,15 @@ public final class Recommendations {
       final ArrayList<Movie> movies,
       final ArrayList<Show> shows,
       final ArrayList<User> users) {
-    if (action.getType().equals("standard")) {
-      return standardMethod(action, movies, shows, users);
-    }
+    return switch (action.getType()) {
+      case "standard" -> standardMethod(action, movies, shows, users);
+      case "best_unseen" -> bestUnseenMethod(action, movies, shows, users);
+      case "popular" -> popularMethod(action, movies, shows, users);
+      case "favorite" -> favoriteMethod(action, movies, shows, users);
+      case "search" -> searchMethod(action, movies, shows, users);
+      default -> null;
+    };
 
-    if (action.getType().equals("best_unseen")) {
-      return bestUnseenMethod(action, movies, shows, users);
-    }
-
-    if (action.getType().equals("popular")) {
-      return popularMethod(action, movies, shows, users);
-    }
-
-    if (action.getType().equals("favorite")) {
-      return favoriteMethod(action, movies, shows, users);
-    }
-
-    if (action.getType().equals("search")) {
-      return searchMethod(action, movies, shows, users);
-    }
-
-    return null;
   }
 
   private String standardMethod(
@@ -61,6 +47,7 @@ public final class Recommendations {
       if (user.getUsername().equals(action.getUsername())) {
         for (Movie movie : movies) {
           int coinFlip = 0;
+          //Parcurg filmele pana gasesc primul film ne vazut de utilizator
           for (Map.Entry<String, Integer> entry : user.getHistory().entrySet()) {
             if (entry.getKey().equals(movie.getName())) {
               coinFlip = 1;
@@ -68,6 +55,7 @@ public final class Recommendations {
             }
           }
           if (coinFlip == 0) {
+            //Returnez numele filmului
             return "StandardRecommendation result: " + movie.getName();
           }
         }
@@ -96,6 +84,7 @@ public final class Recommendations {
       final ArrayList<User> users) {
     LinkedHashMap<String, Double> videoRatings = new LinkedHashMap<>();
     for (Movie movie : movies) {
+      //Adaug intr-un map, numele si ratingul videoclipurilor
       videoRatings.put(movie.getName(), movie.getRating());
     }
     for (Show show : shows) {
@@ -106,7 +95,7 @@ public final class Recommendations {
       showRating /= show.getNumberOfSeasons();
       videoRatings.put(show.getTitle(), showRating);
     }
-
+  //Sortez descrescator mapul
     Map<String, Double> sorted;
     sorted =
         videoRatings.entrySet().stream()
@@ -114,6 +103,7 @@ public final class Recommendations {
             .collect(
                 toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 
+    //Returnez primul element din map care nu se gaseste in istoricul utilizatorului
     for (User user : users) {
       if (user.getUsername().equals(action.getUsername())) {
         for (Map.Entry<String, Double> rating : sorted.entrySet()) {
@@ -139,10 +129,13 @@ public final class Recommendations {
       final ArrayList<Show> shows,
       final ArrayList<User> users) {
     for (User user : users) {
+      //Verific tipul de utilizator
       if (user.getUsername().equals(action.getUsername())) {
         if (user.getSubscriptionType().equals("BASIC")) {
           return "PopularRecommendation cannot be applied!";
         } else if (user.getSubscriptionType().equals("PREMIUM")) {
+          //Creez un LinkedHashMap in care retin toate genurile si numarul de
+          //vizionari din acel gen
           LinkedHashMap<String, Integer> genre = new LinkedHashMap<>();
           for (Movie movie : movies) {
             for (String gen : movie.getGenres()) {

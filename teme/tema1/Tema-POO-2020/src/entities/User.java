@@ -72,5 +72,4 @@ public final class User {
   public void setNumRatings(final int numRatings) {
     this.numRatings = numRatings;
   }
-
 }

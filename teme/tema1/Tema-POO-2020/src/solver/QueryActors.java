@@ -45,6 +45,7 @@ public final class QueryActors {
         for (Actor actor : actors) {
             double avg = 0;
             int num = 0;
+            //Calculez suma ratingurilor actorului
             for (int i = 0; i < actor.getFilmography().size(); i++) {
                 for (Movie movie : movies) {
                     if (movie.getName().equals(actor.getFilmography().get(i))) {
@@ -75,15 +76,18 @@ public final class QueryActors {
                     }
                 }
             }
+            //Calculez media ratingurilor actorului
             if (num == 0) {
                 actor.setAvgRating(0);
             } else {
                 actor.setAvgRating(avg / num);
             }
         }
+        //Ordonez crescator / descrescator actorii dupa nume si rating
         if (action.getSortType().equals("asc")) {
             actors.sort(Comparator.comparing(Actor::getName));
             actors.sort(Comparator.comparing(Actor::getAvgRating));
+            //Creez un stringBuilder in care voi tine stringul ce trebuie returnat
             StringBuilder actorList = new StringBuilder();
             actorList.append("Query result: [");
             int count = action.getNumber();
@@ -128,11 +132,17 @@ public final class QueryActors {
     private String awardsActors(
         final ActionInputData action,
         final ArrayList<Actor> actors) {
+
+        //Ordonez actorii alfabetic
+
         if (action.getSortType().equals("asc")) {
             actors.sort(Comparator.comparing(Actor::getName));
         } else {
             actors.sort(Comparator.comparing(Actor::getName).reversed());
         }
+
+        //Parcurg lista de actori si le adug numele in string builder doar celor
+        // care au toate premiile in lista de awards
 
         StringBuilder actorList = new StringBuilder();
         actorList.append("Query result: [");
@@ -189,14 +199,18 @@ public final class QueryActors {
         for (Actor actor : actors) {
             int check = 0;
             for (String word : action.getFilters().get(2)) {
+                //Impart descrierea actorului in cuvinte independente
                 String[] sentence = actor.getCareerDescription().split("\\W+");
                 for (String description : sentence) {
+                    //Caut cuvintele din filtru si incrementez o valriabila pentru
+                    //fiecare cuvant gasit
                     if (description.toLowerCase().equals(word.toLowerCase())) {
                         check += 1;
                         break;
                     }
                 }
             }
+            //Daca gasesc toate cuvintele, adautg actorul in stringul de retunr
             if (check == action.getFilters().get(2).size()) {
                 actorListLen += 1;
                 actorList.append(actor.getName());
